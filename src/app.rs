@@ -7,6 +7,7 @@ use log::*;
 use std::rc::Rc;
 use yew::prelude::*;
 use yew_functional::*;
+use uuid::Uuid;
 
 pub struct AppFunction {}
 impl FunctionProvider for AppFunction {
@@ -92,6 +93,7 @@ impl FunctionProvider for AppFunction {
 				)
 			}
 		});
+
 		let clear_completed = Callback::from({
 			let set_todo_list = set_todo_list.clone();
 			let todo_list = todo_list.clone();
@@ -101,6 +103,25 @@ impl FunctionProvider for AppFunction {
 						.iter()
 						.filter(|todo| todo.status == TodoStatus::Active)
 						.map(|todo| todo.clone())
+						.collect(),
+				)
+			}
+		});
+
+		let rename_todo = Callback::from({
+			let set_todo_list = set_todo_list.clone();
+			let todo_list = todo_list.clone();
+			move |(uuid, new_name): (Uuid, String)| {
+				set_todo_list(
+					todo_list
+						.iter()
+						.map(|todo| {
+							let mut todo = todo.clone();
+							if todo.id == uuid {
+								todo.name = new_name.clone();
+							}
+							todo
+						})
 						.collect(),
 				)
 			}
@@ -168,6 +189,7 @@ impl FunctionProvider for AppFunction {
 										clear_todo=clear_todo
 										all_completed=todos_left == 0
 										toggle_complete_all=toggle_complete_all
+										rename_todo=rename_todo
 									/>
 									<Footer
 										on_filterchange=on_filterchange

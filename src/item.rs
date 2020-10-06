@@ -10,6 +10,7 @@ pub struct ItemProps {
 	pub toggle_completed: Callback<()>,
 	/// Called whenever the todo should be removed from the todo list.
 	pub clear_todo: Callback<()>,
+	pub rename_todo: Callback<String>,
 }
 
 pub struct ItemFunction {}
@@ -22,14 +23,42 @@ impl FunctionProvider for ItemFunction {
 		let (editing, set_editing) = use_state(|| false);
 		let set_editing = Rc::new(set_editing);
 
+		let input_ref = use_ref(|| NodeRef::default());
+
 		let handle_edit = Callback::from({
 			let set_editing = set_editing.clone();
-			move |_ev| set_editing(true)
+			let input_ref = input_ref.clone();
+			move |_ev| {
+				set_editing(true);
+				input_ref
+					.borrow()
+					.cast::<web_sys::HtmlInputElement>()
+					.unwrap()
+					.focus()
+					.unwrap(); // focus input
+			}
 		});
 
 		let handle_blur = Callback::from({
 			let set_editing = set_editing.clone();
-			move |_ev| set_editing(false)
+			let rename_todo = props.rename_todo.clone();
+			let clear_todo = props.clear_todo.clone();
+			let input_ref = input_ref.clone();
+			move |_ev| {
+				let mut new_name = input_ref
+					.borrow()
+					.cast::<web_sys::HtmlInputElement>()
+					.unwrap()
+					.value();
+				new_name = new_name.trim().to_string(); // trim input
+				if new_name != "" {
+					rename_todo.emit(new_name);
+				} else {
+					// destroy todo
+					clear_todo.emit(());
+				}
+				set_editing(false);
+			}
 		});
 
 		let name = props.todo.name.clone();
@@ -52,7 +81,7 @@ impl FunctionProvider for ItemFunction {
 				{
 					if *editing {
 						html! {
-							<input class="edit" value={&name} onblur=handle_blur />
+							<input class="edit" value={&name} onblur=handle_blur ref=input_ref.clone().borrow().clone() />
 						}
 					}
 					else {

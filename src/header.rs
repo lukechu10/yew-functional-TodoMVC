@@ -31,9 +31,13 @@ impl FunctionProvider for HeaderFunction {
 		let handle_submit = Callback::from(move |ev: KeyboardEvent| {
 			// make sure name is not empty string
 			if ev.key() == "Enter" {
-				props.on_create.emit(name.to_owned().to_string());
-				// reset name to blank
-				set_name(format!(""));
+				let mut name = name.to_owned().to_string();
+				name = name.trim().to_string();
+				if name != "" {
+					props.on_create.emit(name);
+					// reset name to blank
+					set_name(format!(""));
+				}
 			}
 		});
 
