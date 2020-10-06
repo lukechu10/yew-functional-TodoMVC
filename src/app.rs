@@ -51,14 +51,14 @@ impl FunctionProvider for AppFunction {
 					todo_list
 						.iter()
 						.filter(|todo| todo.status == TodoStatus::Active)
-						.map(|todo| todo.clone())
+						.cloned()
 						.collect(),
 				),
 				Filter::Completed => Rc::new(
 					todo_list
 						.iter()
 						.filter(|todo| todo.status == TodoStatus::Completed)
-						.map(|todo| todo.clone())
+						.cloned()
 						.collect(),
 				),
 			}
@@ -88,7 +88,7 @@ impl FunctionProvider for AppFunction {
 					todo_list
 						.iter()
 						.filter(|todo| todo.id != uuid)
-						.map(|todo| todo.clone())
+						.cloned()
 						.collect(),
 				)
 			}
@@ -102,7 +102,7 @@ impl FunctionProvider for AppFunction {
 					todo_list
 						.iter()
 						.filter(|todo| todo.status == TodoStatus::Active)
-						.map(|todo| todo.clone())
+						.cloned()
 						.collect(),
 				)
 			}
@@ -155,7 +155,6 @@ impl FunctionProvider for AppFunction {
 								todo.status = TodoStatus::Active;
 								todo
 							})
-							.map(|todo| todo.clone())
 							.collect()
 					} else {
 						// make all todos completed

@@ -100,7 +100,7 @@ impl FunctionProvider for ItemFunction {
 							<input class="edit" value={&name}
 								onblur=Callback::from(move |_ev| handle_blur.emit(()))
 								onkeyup=handle_submit
-								ref=input_ref.clone().borrow().clone()
+								ref=input_ref.borrow().clone()
 							/>
 						}
 					}

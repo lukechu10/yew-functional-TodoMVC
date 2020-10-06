@@ -41,7 +41,7 @@ impl FunctionProvider for ListFunction {
 				<ul class="todo-list">
 				{
 					for todos.iter().map(|todo| {
-						let todo_id = todo.id.clone();
+						let todo_id = todo.id;
 
 						let toggle_completed_callback = Callback::from({
 							let toggle_completed = toggle_completed.clone();

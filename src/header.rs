@@ -47,7 +47,7 @@ impl FunctionProvider for HeaderFunction {
 				<input
 					class="new-todo"
 					placeholder="What needs to be done?"
-					value=name_s.clone()
+					value=name_s
 					oninput=handle_input
 					onkeyup=handle_submit
 				/>
