@@ -8,6 +8,9 @@ pub struct FooterProps {
 	/// Called when the filter selection changes
 	pub on_filterchange: Callback<Filter>,
 	pub selected_filter: Filter,
+	pub todos_left: u32,
+	pub todos_completed: u32,
+	pub clear_completed: Callback<()>,
 }
 
 pub struct FooterFunction {}
@@ -16,11 +19,17 @@ impl FunctionProvider for FooterFunction {
 
 	fn run(props: &Self::TProps) -> Html {
 		let props = props.clone();
+
+		let items_text = match props.todos_left {
+			1 => "item",
+			_ => "items",
+		};
+
 		html! {
 			<footer class="footer">
 				<span class="todo-count">
-					<strong>{"X"}</strong>
-					<span>{" items left"}</span>
+					<strong>{props.todos_left}</strong>
+					<span>{format!(" {} left", items_text)}</span>
 				</span>
 				<ul class="filters">
 					{
@@ -42,6 +51,18 @@ impl FunctionProvider for FooterFunction {
 						})
 					}
 				</ul>
+				{
+					if props.todos_completed > 0 {
+						html! {
+							<button class="clear-completed" onclick=Callback::from(move |_ev| props.clear_completed.emit(())) >
+								{"Clear completed"}
+							</button>
+						}
+					}
+					else {
+						html! {}
+					}
+				}
 			</footer>
 		}
 	}

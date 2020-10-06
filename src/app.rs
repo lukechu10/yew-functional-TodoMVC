@@ -79,21 +79,67 @@ impl FunctionProvider for AppFunction {
 			}
 		});
 
+		let clear_todo = Callback::from({
+			let set_todo_list = set_todo_list.clone();
+			let todo_list = todo_list.clone();
+			move |uuid| {
+				set_todo_list(
+					todo_list
+						.iter()
+						.filter(|todo| todo.id != uuid)
+						.map(|todo| todo.clone())
+						.collect(),
+				)
+			}
+		});
+		
+		let clear_completed = Callback::from({
+			let set_todo_list = set_todo_list.clone();
+			let todo_list = todo_list.clone();
+			move |_| {
+				set_todo_list(
+					todo_list
+						.iter()
+						.filter(|todo| todo.status == TodoStatus::Active)
+						.map(|todo| todo.clone())
+						.collect(),
+				)
+			}
+		});
+
+		let todos_left = {
+			let todo_list = todo_list.clone();
+			move || {
+				todo_list.iter().fold(0, |acc, todo| {
+					if todo.status == TodoStatus::Active {
+						acc + 1
+					} else {
+						acc
+					}
+				})
+			}
+		};
+
 		html! {
 			<div id="app">
 				<section class="todoapp">
 					<Header on_create=on_create/>
 					{
 						if todo_list.len() > 0 {
+							let todos_left = todos_left();
 							html! {
 								<>
 									<List
 										todo_list=filtered_todo_list(*filter)
 										toggle_completed=toggle_completed
+										clear_todo=clear_todo
 									/>
 									<Footer
 										on_filterchange=on_filterchange
 										selected_filter=*filter
+										todos_left=todos_left
+										todos_completed=todo_list.len() as u32 - todos_left
+										clear_completed=clear_completed
 									/>
 								</>
 							}

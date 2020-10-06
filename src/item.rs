@@ -8,6 +8,8 @@ pub struct ItemProps {
 	pub todo: TodoEntry,
 	/// Called whenever todo.status should be toggled.
 	pub toggle_completed: Callback<()>,
+	/// Called whenever the todo should be removed from the todo list.
+	pub clear_todo: Callback<()>,
 }
 
 pub struct ItemFunction {}
@@ -33,19 +35,19 @@ impl FunctionProvider for ItemFunction {
 		let name = props.todo.name.clone();
 		let completed = props.todo.status == TodoStatus::Completed;
 
+		let toggle_completed = props.toggle_completed;
+		let clear_todo = props.clear_todo;
 		html! {
 			<li class=format!("{} {}", if *editing {"editing"} else {""}, if completed {"completed"} else {""})>
 				<div class="view">
 					<input class="toggle" type="checkbox"
 						checked=completed
-						oninput=Callback::from(move |_ev| {
-							log::info!("Checked!");
-							props.toggle_completed.emit(());
-						}) />
+						oninput=Callback::from(move |_ev| toggle_completed.emit(())
+						) />
 					<label ondblclick=handle_edit>
 						{&name}
 					</label>
-					<button class="destroy" />
+					<button class="destroy" onclick=Callback::from(move |_ev| clear_todo.emit(())) />
 				</div>
 				{
 					if *editing {
