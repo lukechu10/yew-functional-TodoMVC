@@ -44,7 +44,7 @@ impl FunctionProvider for ItemFunction {
 			let rename_todo = props.rename_todo.clone();
 			let clear_todo = props.clear_todo.clone();
 			let input_ref = input_ref.clone();
-			move |_ev| {
+			move |_: ()| {
 				let mut new_name = input_ref
 					.borrow()
 					.cast::<web_sys::HtmlInputElement>()
@@ -61,6 +61,22 @@ impl FunctionProvider for ItemFunction {
 			}
 		});
 
+		let handle_submit = Callback::from({
+			let handle_blur = handle_blur.clone();
+			let input_ref = input_ref.clone();
+			let name = props.todo.name.clone();
+			move |ev: KeyboardEvent| {
+				match ev.key().as_str() {
+					"Enter" => handle_blur.emit(()),
+					"Escape" => {
+						input_ref.borrow().cast::<web_sys::HtmlInputElement>().unwrap().set_value(&name);
+						set_editing(false); // do not rename todo
+					}
+					_ => {}
+				}
+			}
+		});
+
 		let name = props.todo.name.clone();
 		let completed = props.todo.status == TodoStatus::Completed;
 
@@ -71,8 +87,8 @@ impl FunctionProvider for ItemFunction {
 				<div class="view">
 					<input class="toggle" type="checkbox"
 						checked=completed
-						oninput=Callback::from(move |_ev| toggle_completed.emit(())
-						) />
+						oninput=Callback::from(move |_ev| toggle_completed.emit(()))
+					/>
 					<label ondblclick=handle_edit>
 						{&name}
 					</label>
@@ -81,7 +97,11 @@ impl FunctionProvider for ItemFunction {
 				{
 					if *editing {
 						html! {
-							<input class="edit" value={&name} onblur=handle_blur ref=input_ref.clone().borrow().clone() />
+							<input class="edit" value={&name}
+								onblur=Callback::from(move |_ev| handle_blur.emit(()))
+								onkeyup=handle_submit
+								ref=input_ref.clone().borrow().clone()
+							/>
 						}
 					}
 					else {
