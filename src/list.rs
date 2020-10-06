@@ -11,6 +11,8 @@ pub struct ListProps {
 	/// Called whenever a todo's status is toggled. The uuid of the todo is sent to the callback.
 	pub toggle_completed: Callback<Uuid>,
 	pub clear_todo: Callback<Uuid>,
+	pub all_completed: bool,
+	pub toggle_complete_all: Callback<()>,
 }
 
 pub struct ListFunction {}
@@ -23,9 +25,15 @@ impl FunctionProvider for ListFunction {
 		let todos = props.todo_list.clone();
 		let toggle_completed = props.toggle_completed;
 		let clear_todo = props.clear_todo;
+		let toggle_complete_all = props.toggle_complete_all;
 		html! {
 			<section class="main">
-				<input id="toggle-all" class="toggle-all" type="checkbox" readonly=true />
+				<input
+					id="toggle-all" class="toggle-all" type="checkbox"
+					oninput=Callback::from(move |_ev| toggle_complete_all.emit(()))
+					checked=props.all_completed
+					readonly=true
+				/>
 				<label for="toggle-all" />
 
 				<ul class="todo-list">

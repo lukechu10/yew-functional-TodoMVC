@@ -4,7 +4,7 @@ use yew_functional::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct HeaderProps {
-	pub on_create: Callback<String>
+	pub on_create: Callback<String>,
 }
 
 pub struct HeaderFunction {}

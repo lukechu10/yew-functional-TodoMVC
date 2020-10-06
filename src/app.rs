@@ -92,7 +92,6 @@ impl FunctionProvider for AppFunction {
 				)
 			}
 		});
-		
 		let clear_completed = Callback::from({
 			let set_todo_list = set_todo_list.clone();
 			let todo_list = todo_list.clone();
@@ -120,10 +119,44 @@ impl FunctionProvider for AppFunction {
 			}
 		};
 
+		let toggle_complete_all = Callback::from({
+			let set_todo_list = set_todo_list.clone();
+			let todo_list = todo_list.clone();
+			let todos_left = todos_left();
+			move |_| {
+				set_todo_list({
+					if todos_left == 0 {
+						// make all todos active
+						todo_list
+							.iter()
+							.map(|todo| {
+								let mut todo = todo.clone();
+								todo.status = TodoStatus::Active;
+								todo
+							})
+							.map(|todo| todo.clone())
+							.collect()
+					} else {
+						// make all todos completed
+						todo_list
+							.iter()
+							.map(|todo| {
+								let mut todo = todo.clone();
+								todo.status = TodoStatus::Completed;
+								todo
+							})
+							.collect()
+					}
+				})
+			}
+		});
+
 		html! {
 			<div id="app">
 				<section class="todoapp">
-					<Header on_create=on_create/>
+					<Header
+						on_create=on_create
+					/>
 					{
 						if todo_list.len() > 0 {
 							let todos_left = todos_left();
@@ -133,6 +166,8 @@ impl FunctionProvider for AppFunction {
 										todo_list=filtered_todo_list(*filter)
 										toggle_completed=toggle_completed
 										clear_todo=clear_todo
+										all_completed=todos_left == 0
+										toggle_complete_all=toggle_complete_all
 									/>
 									<Footer
 										on_filterchange=on_filterchange
