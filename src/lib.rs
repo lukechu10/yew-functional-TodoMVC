@@ -10,6 +10,7 @@ mod list;
 use strum_macros::EnumIter;
 use wasm_bindgen::prelude::*;
 use uuid::Uuid;
+use yew::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -62,4 +63,14 @@ pub enum Filter {
 	All,
 	Active,
 	Completed,
+}
+
+impl<'a> Into<Href> for &'a Filter {
+    fn into(self) -> Href {
+        match *self {
+            Filter::All => "#/".into(),
+            Filter::Active => "#/active".into(),
+            Filter::Completed => "#/completed".into(),
+        }
+    }
 }

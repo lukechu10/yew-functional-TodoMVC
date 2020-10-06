@@ -37,7 +37,7 @@ impl FunctionProvider for FooterFunction {
 							html! {
 								<li>
 									<a
-										href="./#"
+										href=&filter
 										class=if filter == props.selected_filter {"selected"} else {""}
 										onclick=Callback::from({
 											let props = props.clone();
