@@ -1,4 +1,4 @@
-name: Deploy to Netlify
+name: Deploy to Github Pages
 
 on:
   push:
@@ -22,16 +22,20 @@ jobs:
           node-version: 14
 
       - name: Install
-        run: npm install
+        run: yarn
 
       - name: Build
-        run: npm run build
+        run: yarn build
 
-      - name: Publish
-        uses: netlify/actions/cli@master
+      - name: Create .nojekyll file
+        run: touch dist/.nojekyll
+        
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3.7.0
         with:
-          args: deploy --dir=dist --prod
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh_pages
+          force_orphan: true
+          publish_dir: dist/
+          enable_jekyll: false
   
