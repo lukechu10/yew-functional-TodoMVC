@@ -36,7 +36,14 @@ impl FunctionProvider for AppFunction {
         }));
         let set_todo_list = Rc::new(set_todo_list);
 
-        let (filter, set_filter) = use_state(|| Filter::All);
+        let (filter, set_filter) = use_state(|| {
+            let hash = web_sys::window().unwrap().location().hash().unwrap();
+            match hash.as_str() {
+                "#/active" => Filter::Active,
+                "#/completed" => Filter::Completed,
+                _ => Filter::All,
+            }
+        });
         let set_filter = Rc::new(set_filter);
 
         // save todo_list to localStorage
