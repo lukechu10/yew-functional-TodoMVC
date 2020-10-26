@@ -11,6 +11,8 @@ use strum_macros::EnumIter;
 use wasm_bindgen::prelude::*;
 use uuid::Uuid;
 use yew::prelude::*;
+use serde::{Serialize, Deserialize};
+use anyhow::Result;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -26,13 +28,13 @@ pub fn run_app() -> Result<(), JsValue> {
 	Ok(())
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TodoStatus {
 	Active,
 	Completed,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TodoEntry {
 	/// The name of the todo.
 	pub name: String,
@@ -55,7 +57,7 @@ impl TodoEntry {
 		else {
 			TodoStatus::Active
 		}
-	}
+    }
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, EnumIter)]

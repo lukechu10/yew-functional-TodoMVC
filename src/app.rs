@@ -3,12 +3,17 @@ use crate::footer::Footer;
 use crate::header::Header;
 use crate::list::List;
 use crate::{Filter, TodoEntry, TodoStatus};
+use anyhow::Result;
 use enclose::enclose;
 use log::*;
+use std::cell::RefCell;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
+use yew::services::storage::{Area, StorageService};
 use yew_functional::*;
+
+const KEY: &'static str = "yew.todomvc.self";
 
 pub struct AppFunction {}
 impl FunctionProvider for AppFunction {
@@ -17,11 +22,33 @@ impl FunctionProvider for AppFunction {
     fn run(_props: &Self::TProps) -> Html {
         info!("rendered!");
 
-        let (todo_list, set_todo_list) = use_state(|| Vec::<TodoEntry>::new());
+        let (storage_service, _) = use_state(|| {
+            RefCell::new(StorageService::new(Area::Local).expect("storage was disabled by user"))
+        });
+
+        let (todo_list, set_todo_list) = use_state(enclose!((storage_service) move || {
+            // try to restore state from localStorage
+            let json: Result<String> = storage_service.borrow().restore(KEY);
+            match json {
+                Ok(json) => serde_json::from_str(&json).unwrap(),
+                Err(_) => Vec::<TodoEntry>::new(),
+            }
+        }));
         let set_todo_list = Rc::new(set_todo_list);
 
         let (filter, set_filter) = use_state(|| Filter::All);
         let set_filter = Rc::new(set_filter);
+
+        // save todo_list to localStorage
+        use_effect_with_deps(
+            enclose!((storage_service, todo_list) move |_| {
+                // serialize as json
+                let json = serde_json::to_string(todo_list.as_ref()).unwrap();
+                storage_service.borrow_mut().store(KEY, Ok(json));
+                move || ()
+            }),
+            todo_list.clone(),
+        );
 
         let on_create = enclose!((set_todo_list, todo_list) move |todo_name: String| {
             let new_todo = TodoEntry::new(todo_name);
