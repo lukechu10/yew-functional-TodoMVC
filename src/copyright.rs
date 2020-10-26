@@ -1,8 +1,8 @@
 use yew::prelude::*;
 use yew_functional::*;
 
-pub struct CopywrightFunction {}
-impl FunctionProvider for CopywrightFunction {
+pub struct CopyrightFunction {}
+impl FunctionProvider for CopyrightFunction {
 	type TProps = ();
 
 	fn run(_props: &Self::TProps) -> Html {
@@ -21,4 +21,4 @@ impl FunctionProvider for CopywrightFunction {
 		}
 	}
 }
-pub type Copywright = FunctionComponent<CopywrightFunction>;
+pub type Copyright = FunctionComponent<CopyrightFunction>;

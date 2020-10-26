@@ -1,4 +1,4 @@
-use crate::copyright::Copywright;
+use crate::copyright::Copyright;
 use crate::footer::Footer;
 use crate::header::Header;
 use crate::list::List;
@@ -205,7 +205,7 @@ impl FunctionProvider for AppFunction {
 						}
 					}
 				</section>
-				<Copywright />
+				<Copyright />
 			</div>
 		}
 	}
