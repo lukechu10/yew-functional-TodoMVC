@@ -42,22 +42,23 @@ impl FunctionProvider for ListFunction {
                 <ul class="todo-list">
                 {
                     for todos.iter().map(|todo| {
-                        let todo_id = todo.id;
+                        let id = todo.id;
 
                         let toggle_completed_callback = Callback::from(enclose!((toggle_completed)
-                            move |_| toggle_completed.emit(todo_id)
+                            move |_| toggle_completed.emit(id)
                         ));
 
                         let clear_todo_callback = Callback::from(enclose!((clear_todo)
-                            move |_| clear_todo.emit(todo_id)
+                            move |_| clear_todo.emit(id)
                         ));
 
                         let rename_todo_callback = Callback::from(enclose!((rename_todo)
-                            move |new_name| rename_todo.emit((todo_id, new_name))
+                            move |new_name| rename_todo.emit((id, new_name))
                         ));
 
                         html! {
                             <Item
+                                key=id.to_string()
                                 todo=todo
                                 toggle_completed=toggle_completed_callback
                                 clear_todo=clear_todo_callback
