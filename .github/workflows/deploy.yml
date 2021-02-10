@@ -15,17 +15,10 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14
-
-      - name: Install
-        run: yarn
-
-      - name: Build
-        run: yarn build
+      
+      - run: brew update
+      - run: brew install trunk@8.0.1
+      - run: trunk build --release
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
