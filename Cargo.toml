@@ -1,39 +1,36 @@
 [package]
-name = "yew-wasm-pack-template"
-version = "0.2.0"
-authors = ["Yew Maintainers <maintainers@yew.rs"]
+authors = ["Luke Chu <37006668+lukechu10@users.noreply.github.com>"]
 edition = "2018"
-
-[lib]
-crate-type = ["cdylib", "rlib"]
+name = "yew-functional-todo"
+version = "0.2.0"
 
 [dependencies]
 anyhow = "1.0.33"
 enclose = "1.1.8"
 lazy_static = "1.4"
 log = "0.4"
-strum = "0.17"
-strum_macros = "0.17"
 serde = "1"
 serde_derive = "1"
 serde_json = "1.0.59"
-uuid = { version="0.8", features=["v4", "wasm-bindgen", "serde"] }
+strum = "0.17"
+strum_macros = "0.17"
+uuid = {version = "0.8", features = ["v4", "wasm-bindgen", "serde"]}
 wasm-bindgen = "0.2.58"
 wasm-logger = "0.2"
-wee_alloc = { version = "0.4.4", optional = true }
-yew = {git="https://github.com/yewstack/yew", tag="0.17.4"}
-yew-functional = {git="https://github.com/yewstack/yew", tag="0.17.4"}
+wee_alloc = {version = "0.4.4", optional = true}
+yew = {git = "https://github.com/yewstack/yew", tag = "0.17.4"}
+yew-functional = {git = "https://github.com/yewstack/yew", tag = "0.17.4"}
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
 [dependencies.web-sys]
-version = "0.3.4"
 features = [
-    "Window",
-    "Location",
-    "KeyboardEvent",
+  "Window",
+  "Location",
+  "KeyboardEvent",
 ]
+version = "0.3.4"
 
 [profile.release]
 opt-level = 'z'
