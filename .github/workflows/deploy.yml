@@ -15,13 +15,17 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      
-      - run: brew install trunk
+
+      - name: Install trunk
+        run: wget -qO- https://github.com/thedodd/trunk/releases/download/v0.8.1/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+
+      - run: cargo install wasm-bindgen-cli
+
       - run: trunk build --release
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
-        
+
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.7.0
         with:
@@ -30,4 +34,3 @@ jobs:
           force_orphan: true
           publish_dir: dist/
           enable_jekyll: false
-  
