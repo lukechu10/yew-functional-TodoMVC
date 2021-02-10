@@ -1,6 +1,6 @@
 use crate::item::Item;
 use crate::TodoEntry;
-use enclose::enclose;
+use enclose::enc;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
@@ -44,15 +44,15 @@ impl FunctionProvider for ListFunction {
                     for todos.iter().map(|todo| {
                         let id = todo.id;
 
-                        let toggle_completed_callback = Callback::from(enclose!((toggle_completed)
+                        let toggle_completed_callback = Callback::from(enc!((toggle_completed)
                             move |_| toggle_completed.emit(id)
                         ));
 
-                        let clear_todo_callback = Callback::from(enclose!((clear_todo)
+                        let clear_todo_callback = Callback::from(enc!((clear_todo)
                             move |_| clear_todo.emit(id)
                         ));
 
-                        let rename_todo_callback = Callback::from(enclose!((rename_todo)
+                        let rename_todo_callback = Callback::from(enc!((rename_todo)
                             move |new_name| rename_todo.emit((id, new_name))
                         ));
 

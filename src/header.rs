@@ -1,4 +1,4 @@
-use enclose::enclose;
+use enclose::enc;
 use std::rc::Rc;
 use yew::prelude::*;
 use yew_functional::*;
@@ -17,10 +17,10 @@ impl FunctionProvider for HeaderFunction {
         let set_name = Rc::new(set_name);
 
         // oninput
-        let handle_input = enclose!((set_name) move |ev: InputData| set_name(ev.value));
+        let handle_input = enc!((set_name) move |ev: InputData| set_name(ev.value));
 
         // onkeyup (for detecting "Enter" key)
-        let handle_submit = enclose!((name, set_name, props) move |ev: KeyboardEvent| {
+        let handle_submit = enc!((name, set_name, props) move |ev: KeyboardEvent| {
             // make sure name is not empty string
             if ev.key() == "Enter" {
                 let mut name = name.to_owned().to_string();

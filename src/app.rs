@@ -4,7 +4,7 @@ use crate::header::Header;
 use crate::list::List;
 use crate::{Filter, TodoEntry, TodoStatus};
 use anyhow::Result;
-use enclose::enclose;
+use enclose::enc;
 use log::*;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -26,7 +26,7 @@ impl FunctionProvider for AppFunction {
             RefCell::new(StorageService::new(Area::Local).expect("storage was disabled by user"))
         });
 
-        let (todo_list, set_todo_list) = use_state(enclose!((storage_service) move || {
+        let (todo_list, set_todo_list) = use_state(enc!((storage_service) move || {
             // try to restore state from localStorage
             let json: Result<String> = storage_service.borrow().restore(KEY);
             match json {
@@ -48,7 +48,7 @@ impl FunctionProvider for AppFunction {
 
         // save todo_list to localStorage
         use_effect_with_deps(
-            enclose!((storage_service, todo_list) move |_| {
+            enc!((storage_service, todo_list) move |_| {
                 // serialize as json
                 let json = serde_json::to_string(todo_list.as_ref()).unwrap();
                 storage_service.borrow_mut().store(KEY, Ok(json));
@@ -57,7 +57,7 @@ impl FunctionProvider for AppFunction {
             todo_list.clone(),
         );
 
-        let on_create = enclose!((set_todo_list, todo_list) move |todo_name: String| {
+        let on_create = enc!((set_todo_list, todo_list) move |todo_name: String| {
             let new_todo = TodoEntry::new(todo_name);
 
             set_todo_list({
@@ -67,9 +67,9 @@ impl FunctionProvider for AppFunction {
             });
         });
 
-        let on_filterchange = enclose!((set_filter) move |new_filter| set_filter(new_filter));
+        let on_filterchange = enc!((set_filter) move |new_filter| set_filter(new_filter));
 
-        let filtered_todo_list = enclose!((todo_list) move |filter: Filter| match filter {
+        let filtered_todo_list = enc!((todo_list) move |filter: Filter| match filter {
             Filter::All => todo_list,
             Filter::Active => Rc::new(
                 todo_list
@@ -87,7 +87,7 @@ impl FunctionProvider for AppFunction {
             ),
         });
 
-        let toggle_completed = enclose!((set_todo_list, todo_list) move |uuid| {
+        let toggle_completed = enc!((set_todo_list, todo_list) move |uuid| {
             set_todo_list({
                 let mut todo_list = (*todo_list).clone();
                 for todo in &mut todo_list {
@@ -99,7 +99,7 @@ impl FunctionProvider for AppFunction {
             })
         });
 
-        let clear_todo = enclose!((set_todo_list, todo_list) move |uuid| {
+        let clear_todo = enc!((set_todo_list, todo_list) move |uuid| {
             set_todo_list(
                 todo_list
                     .iter()
@@ -109,7 +109,7 @@ impl FunctionProvider for AppFunction {
             )
         });
 
-        let clear_completed = enclose!((set_todo_list, todo_list) move |_| {
+        let clear_completed = enc!((set_todo_list, todo_list) move |_| {
             set_todo_list(
                 todo_list
                     .iter()
@@ -119,7 +119,7 @@ impl FunctionProvider for AppFunction {
             )
         });
 
-        let rename_todo = enclose!((set_todo_list, todo_list) move |(uuid, new_name): (Uuid, String)| {
+        let rename_todo = enc!((set_todo_list, todo_list) move |(uuid, new_name): (Uuid, String)| {
             set_todo_list(
                 todo_list
                     .iter()
@@ -133,7 +133,7 @@ impl FunctionProvider for AppFunction {
                     .collect(),
             )
         });
-        let todos_left = enclose!((todo_list) move || {
+        let todos_left = enc!((todo_list) move || {
             todo_list.iter().fold(0, |acc, todo| {
                 if todo.status == TodoStatus::Active {
                     acc + 1
@@ -143,7 +143,7 @@ impl FunctionProvider for AppFunction {
             })
         });
 
-        let toggle_complete_all = enclose!((set_todo_list, todo_list, todos_left) move |_| {
+        let toggle_complete_all = enc!((set_todo_list, todo_list, todos_left) move |_| {
             set_todo_list({
                 if todos_left() == 0 {
                     // make all todos active

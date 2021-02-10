@@ -1,5 +1,5 @@
 use crate::{TodoEntry, TodoStatus};
-use enclose::enclose;
+use enclose::enc;
 use std::rc::Rc;
 use yew::prelude::*;
 use yew_functional::*;
@@ -26,7 +26,7 @@ impl FunctionProvider for ItemFunction {
 
         let input_ref = use_ref(|| NodeRef::default());
 
-        let handle_edit = enclose!((set_editing, input_ref) move |_ev| {
+        let handle_edit = enc!((set_editing, input_ref) move |_ev| {
             set_editing(true);
             input_ref
                 .borrow()
@@ -36,7 +36,7 @@ impl FunctionProvider for ItemFunction {
                 .unwrap(); // focus input
         });
 
-        let handle_blur = enclose!((set_editing, input_ref, props) move || {
+        let handle_blur = enc!((set_editing, input_ref, props) move || {
             let mut new_name = input_ref
                 .borrow()
                 .cast::<web_sys::HtmlInputElement>()
@@ -52,7 +52,7 @@ impl FunctionProvider for ItemFunction {
             set_editing(false);
         });
 
-        let handle_submit = enclose!((handle_blur, input_ref, props) move |ev: KeyboardEvent| {
+        let handle_submit = enc!((handle_blur, input_ref, props) move |ev: KeyboardEvent| {
             match ev.key().as_str() {
                 "Enter" => handle_blur(),
                 "Escape" => {
