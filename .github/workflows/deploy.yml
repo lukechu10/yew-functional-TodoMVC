@@ -16,8 +16,7 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
       
-      - run: brew update
-      - run: brew install trunk@8.0.1
+      - run: brew install trunk
       - run: trunk build --release
 
       - name: Create .nojekyll file
