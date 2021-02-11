@@ -6,7 +6,6 @@ use crate::{Filter, TodoEntry, TodoStatus};
 use anyhow::Result;
 use enclose::enc;
 use log::*;
-use std::cell::RefCell;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
@@ -19,15 +18,17 @@ const KEY: &'static str = "yew.todomvc.self";
 pub fn app(_props: &()) -> Html {
     info!("rendered!");
 
-    let (storage_service, _) = use_state(|| {
-        RefCell::new(StorageService::new(Area::Local).expect("storage was disabled by user"))
-    });
+    let storage_service =
+        use_ref(|| StorageService::new(Area::Local).expect("storage was disabled by user"));
 
     let (todo_list, set_todo_list) = use_state(enc!((storage_service) move || {
         // try to restore state from localStorage
         let json: Result<String> = storage_service.borrow().restore(KEY);
         match json {
-            Ok(json) => serde_json::from_str(&json).unwrap(),
+            Ok(json) => match serde_json::from_str(&json) {
+                Ok(todos) => todos,
+                Err(_) => Vec::<TodoEntry>::new(), // bad JSON state
+            },
             Err(_) => Vec::<TodoEntry>::new(),
         }
     }));

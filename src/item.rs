@@ -1,6 +1,5 @@
 use crate::{TodoEntry, TodoStatus};
 use enclose::enc;
-use std::rc::Rc;
 use yew::prelude::*;
 use yew_functional::*;
 
