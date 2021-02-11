@@ -1,5 +1,4 @@
 use enclose::enc;
-use std::rc::Rc;
 use yew::prelude::*;
 use yew_functional::*;
 
@@ -11,7 +10,6 @@ pub struct HeaderProps {
 #[function_component(Header)]
 pub fn header(props: &HeaderProps) -> Html {
     let (name, set_name) = use_state(|| format!("")); // input state
-    let set_name = Rc::new(set_name);
 
     // oninput
     let handle_input = enc!((set_name) move |ev: InputData| set_name(ev.value));

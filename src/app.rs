@@ -31,7 +31,6 @@ pub fn app(_props: &()) -> Html {
             Err(_) => Vec::<TodoEntry>::new(),
         }
     }));
-    let set_todo_list = Rc::new(set_todo_list);
 
     let (filter, set_filter) = use_state(|| {
         let hash = web_sys::window().unwrap().location().hash().unwrap();
@@ -41,7 +40,6 @@ pub fn app(_props: &()) -> Html {
             _ => Filter::All,
         }
     });
-    let set_filter = Rc::new(set_filter);
 
     // save todo_list to localStorage
     use_effect_with_deps(

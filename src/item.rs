@@ -19,7 +19,6 @@ pub fn item(props: &ItemProps) -> Html {
     let props = props.clone();
 
     let (editing, set_editing) = use_state(|| false);
-    let set_editing = Rc::new(set_editing);
 
     let input_ref = use_ref(|| NodeRef::default());
 
