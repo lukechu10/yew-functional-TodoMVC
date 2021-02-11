@@ -14,8 +14,6 @@ pub struct ItemProps {
 
 #[function_component(Item)]
 pub fn item(props: &ItemProps) -> Html {
-    let props = props.clone();
-
     let (editing, set_editing) = use_state(|| false);
 
     let input_ref = use_ref(|| NodeRef::default());
@@ -63,8 +61,8 @@ pub fn item(props: &ItemProps) -> Html {
 
     let completed = props.todo.status == TodoStatus::Completed;
 
-    let toggle_completed = props.toggle_completed;
-    let clear_todo = props.clear_todo;
+    let toggle_completed = props.toggle_completed.clone();
+    let clear_todo = props.clear_todo.clone();
     html! {
         <li class=format!("{} {}", if *editing {"editing"} else {""}, if completed {"completed"} else {""})>
             <div class="view">

@@ -54,7 +54,7 @@ pub fn app(_props: &()) -> Html {
         todo_list.clone(),
     );
 
-    let on_create = enc!((set_todo_list, todo_list) move |todo_name: String| {
+    let on_create = cb!((set_todo_list, todo_list) move |todo_name: String| {
         let new_todo = TodoEntry::new(todo_name);
 
         set_todo_list({
@@ -170,7 +170,7 @@ pub fn app(_props: &()) -> Html {
         <div id="app">
             <section class="todoapp">
                 <Header
-                    on_create=Callback::from(on_create)
+                    on_create=on_create
                 />
                 {
                     if todo_list.len() > 0 {
