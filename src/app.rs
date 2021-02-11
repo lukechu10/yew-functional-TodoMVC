@@ -3,6 +3,7 @@ use crate::footer::Footer;
 use crate::header::Header;
 use crate::list::List;
 use crate::{cb, Filter, TodoEntry, TodoStatus};
+
 use anyhow::Result;
 use enclose::enc;
 use log::*;
