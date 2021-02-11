@@ -36,7 +36,7 @@ impl FunctionProvider for FooterFunction {
                             html! {
                                 <li>
                                     <a
-                                        href=&filter
+                                        href=filter
                                         class=if filter == props.selected_filter {"selected"} else {""}
                                         onclick=Callback::from(enc!((props) move |_ev| {
                                                 props.on_filterchange.emit(filter);

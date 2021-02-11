@@ -10,8 +10,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
-use yew::services::storage::{Area, StorageService};
 use yew_functional::*;
+use yew_services::storage::{Area, StorageService};
 
 const KEY: &'static str = "yew.todomvc.self";
 

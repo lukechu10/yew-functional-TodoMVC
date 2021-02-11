@@ -9,10 +9,10 @@ mod list;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 use strum_macros::EnumIter;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
-use yew::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -58,19 +58,19 @@ impl TodoEntry {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, EnumIter)]
+#[derive(Debug, Copy, Clone, PartialEq, EnumIter)]
 pub enum Filter {
     All,
     Active,
     Completed,
 }
 
-impl<'a> Into<Href> for &'a Filter {
-    fn into(self) -> Href {
+impl fmt::Display for Filter {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            Filter::All => "#/".into(),
-            Filter::Active => "#/active".into(),
-            Filter::Completed => "#/completed".into(),
+            Filter::All => write!(f, "#/"),
+            Filter::Active => write!(f, "#/active"),
+            Filter::Completed => write!(f, "#/completed"),
         }
     }
 }
