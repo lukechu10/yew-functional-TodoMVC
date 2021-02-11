@@ -9,7 +9,7 @@ pub struct HeaderProps {
 
 #[function_component(Header)]
 pub fn header(props: &HeaderProps) -> Html {
-    let (name, set_name) = use_state(|| format!("")); // input state
+    let (name, set_name) = use_state(|| "".to_string()); // input state
 
     let oninput = cb!((set_name) move |ev: InputData| set_name(ev.value));
 
@@ -22,7 +22,7 @@ pub fn header(props: &HeaderProps) -> Html {
             if name != "" {
                 props.on_create.emit(name);
                 // reset name to blank
-                set_name(format!(""));
+                set_name("".to_string());
             }
         }
     });
