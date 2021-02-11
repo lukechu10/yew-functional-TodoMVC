@@ -14,55 +14,50 @@ pub struct FooterProps {
     pub clear_completed: Callback<()>,
 }
 
-pub struct FooterFunction {}
-impl FunctionProvider for FooterFunction {
-    type TProps = FooterProps;
+#[function_component(Footer)]
+pub fn footer(props: &FooterProps) -> Html {
+    let items_text = match props.todos_left {
+        1 => "item",
+        _ => "items",
+    };
 
-    fn run(props: &Self::TProps) -> Html {
-        let items_text = match props.todos_left {
-            1 => "item",
-            _ => "items",
-        };
-
-        html! {
-            <footer class="footer">
-                <span class="todo-count">
-                    <strong>{props.todos_left}</strong>
-                    <span>{format!(" {} left", items_text)}</span>
-                </span>
-                <ul class="filters">
-                    {
-                        for Filter::iter().map(|filter| {
-                            html! {
-                                <li>
-                                    <a
-                                        href=filter
-                                        class=if filter == props.selected_filter {"selected"} else {""}
-                                        onclick=Callback::from(enc!((props) move |_ev| {
-                                                props.on_filterchange.emit(filter);
-                                            }))
-                                    >{format!("{:?}", filter)}</a>
-                                </li>
-                            }
-                        })
-                    }
-                </ul>
+    html! {
+        <footer class="footer">
+            <span class="todo-count">
+                <strong>{props.todos_left}</strong>
+                <span>{format!(" {} left", items_text)}</span>
+            </span>
+            <ul class="filters">
                 {
-                    if props.todos_completed > 0 {
+                    for Filter::iter().map(|filter| {
                         html! {
-                            <button
-                                class="clear-completed"
-                                onclick=Callback::from(enc!((props) move |_ev| props.clear_completed.emit(()))) >
-                                {"Clear completed"}
-                            </button>
+                            <li>
+                                <a
+                                    href=filter
+                                    class=if filter == props.selected_filter {"selected"} else {""}
+                                    onclick=Callback::from(enc!((props) move |_ev| {
+                                            props.on_filterchange.emit(filter);
+                                        }))
+                                >{format!("{:?}", filter)}</a>
+                            </li>
                         }
-                    }
-                    else {
-                        html! {}
+                    })
+                }
+            </ul>
+            {
+                if props.todos_completed > 0 {
+                    html! {
+                        <button
+                            class="clear-completed"
+                            onclick=Callback::from(enc!((props) move |_ev| props.clear_completed.emit(()))) >
+                            {"Clear completed"}
+                        </button>
                     }
                 }
-            </footer>
-        }
+                else {
+                    html! {}
+                }
+            }
+        </footer>
     }
 }
-pub type Footer = FunctionComponent<FooterFunction>;
