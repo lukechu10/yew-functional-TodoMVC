@@ -1,6 +1,5 @@
 use crate::item::Item;
-use crate::TodoEntry;
-use enclose::enc;
+use crate::{cb, TodoEntry};
 use std::rc::Rc;
 use uuid::Uuid;
 use yew::prelude::*;
@@ -41,17 +40,17 @@ pub fn list(props: &ListProps) -> Html {
                 for todos.iter().map(|todo| {
                     let id = todo.id;
 
-                    let toggle_completed_callback = Callback::from(enc!((toggle_completed)
+                    let toggle_completed_callback = cb!((toggle_completed)
                         move |_| toggle_completed.emit(id)
-                    ));
+                    );
 
-                    let clear_todo_callback = Callback::from(enc!((clear_todo)
+                    let clear_todo_callback = cb!((clear_todo)
                         move |_| clear_todo.emit(id)
-                    ));
+                    );
 
-                    let rename_todo_callback = Callback::from(enc!((rename_todo)
+                    let rename_todo_callback = cb!((rename_todo)
                         move |new_name| rename_todo.emit((id, new_name))
-                    ));
+                    );
 
                     html! {
                         <Item

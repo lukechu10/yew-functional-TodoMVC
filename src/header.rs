@@ -1,4 +1,4 @@
-use enclose::enc;
+use crate::cb;
 use yew::prelude::*;
 use yew_functional::*;
 
@@ -11,11 +11,10 @@ pub struct HeaderProps {
 pub fn header(props: &HeaderProps) -> Html {
     let (name, set_name) = use_state(|| format!("")); // input state
 
-    // oninput
-    let handle_input = enc!((set_name) move |ev: InputData| set_name(ev.value));
+    let oninput = cb!((set_name) move |ev: InputData| set_name(ev.value));
 
     // onkeyup (for detecting "Enter" key)
-    let handle_submit = enc!((name, set_name, props) move |ev: KeyboardEvent| {
+    let handle_submit = cb!((name, set_name, props) move |ev: KeyboardEvent| {
         // make sure name is not empty string
         if ev.key() == "Enter" {
             let mut name = name.to_owned().to_string();
@@ -34,9 +33,9 @@ pub fn header(props: &HeaderProps) -> Html {
             <input
                 class="new-todo"
                 placeholder="What needs to be done?"
-                value=&name
-                oninput=Callback::from(handle_input)
-                onkeyup=Callback::from(handle_submit)
+                value=name
+                oninput=oninput
+                onkeyup=handle_submit
             />
         </header>
     }

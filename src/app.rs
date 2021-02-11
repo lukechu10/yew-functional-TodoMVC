@@ -2,7 +2,7 @@ use crate::copyright::Copyright;
 use crate::footer::Footer;
 use crate::header::Header;
 use crate::list::List;
-use crate::{Filter, TodoEntry, TodoStatus};
+use crate::{cb, Filter, TodoEntry, TodoStatus};
 use anyhow::Result;
 use enclose::enc;
 use log::*;
@@ -48,7 +48,7 @@ pub fn app(_props: &()) -> Html {
             // serialize as json
             let json = serde_json::to_string(todo_list.as_ref()).unwrap();
             storage_service.borrow_mut().store(KEY, Ok(json));
-            move || ()
+            || ()
         }),
         todo_list.clone(),
     );
@@ -63,7 +63,7 @@ pub fn app(_props: &()) -> Html {
         });
     });
 
-    let on_filterchange = enc!((set_filter) move |new_filter| set_filter(new_filter));
+    let on_filterchange = cb!((set_filter) move |new_filter| set_filter(new_filter));
 
     let filtered_todo_list = enc!((todo_list) move |filter: Filter| match filter {
         Filter::All => todo_list,
@@ -83,7 +83,7 @@ pub fn app(_props: &()) -> Html {
         ),
     });
 
-    let toggle_completed = enc!((set_todo_list, todo_list) move |uuid| {
+    let toggle_completed = cb!((set_todo_list, todo_list) move |uuid| {
         set_todo_list({
             let mut todo_list = (*todo_list).clone();
             for todo in &mut todo_list {
@@ -95,7 +95,7 @@ pub fn app(_props: &()) -> Html {
         })
     });
 
-    let clear_todo = enc!((set_todo_list, todo_list) move |uuid| {
+    let clear_todo = cb!((set_todo_list, todo_list) move |uuid| {
         set_todo_list(
             todo_list
                 .iter()
@@ -105,7 +105,7 @@ pub fn app(_props: &()) -> Html {
         )
     });
 
-    let clear_completed = enc!((set_todo_list, todo_list) move |_| {
+    let clear_completed = cb!((set_todo_list, todo_list) move |_| {
         set_todo_list(
             todo_list
                 .iter()
@@ -115,7 +115,7 @@ pub fn app(_props: &()) -> Html {
         )
     });
 
-    let rename_todo = enc!((set_todo_list, todo_list) move |(uuid, new_name): (Uuid, String)| {
+    let rename_todo = cb!((set_todo_list, todo_list) move |(uuid, new_name): (Uuid, String)| {
         set_todo_list(
             todo_list
                 .iter()
@@ -139,7 +139,7 @@ pub fn app(_props: &()) -> Html {
         })
     });
 
-    let toggle_complete_all = enc!((set_todo_list, todo_list, todos_left) move |_| {
+    let toggle_complete_all = cb!((set_todo_list, todo_list, todos_left) move |_| {
         set_todo_list({
             if todos_left() == 0 {
                 // make all todos active
@@ -178,18 +178,18 @@ pub fn app(_props: &()) -> Html {
                             <>
                                 <List
                                     todo_list=filtered_todo_list(*filter)
-                                    toggle_completed=Callback::from(toggle_completed)
-                                    clear_todo=Callback::from(clear_todo)
+                                    toggle_completed=toggle_completed
+                                    clear_todo=clear_todo
                                     all_completed=todos_left == 0
-                                    toggle_complete_all=Callback::from(toggle_complete_all)
-                                    rename_todo=Callback::from(rename_todo)
+                                    toggle_complete_all=toggle_complete_all
+                                    rename_todo=rename_todo
                                 />
                                 <Footer
-                                    on_filterchange=Callback::from(on_filterchange)
+                                    on_filterchange=on_filterchange
                                     selected_filter=*filter
                                     todos_left=todos_left
                                     todos_completed=todo_list.len() as u32 - todos_left
-                                    clear_completed=Callback::from(clear_completed)
+                                    clear_completed=clear_completed
                                 />
                             </>
                         }

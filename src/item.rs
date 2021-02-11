@@ -1,5 +1,4 @@
-use crate::{TodoEntry, TodoStatus};
-use enclose::enc;
+use crate::{cb, TodoEntry, TodoStatus};
 use yew::prelude::*;
 use yew_functional::*;
 
@@ -21,7 +20,7 @@ pub fn item(props: &ItemProps) -> Html {
 
     let input_ref = use_ref(|| NodeRef::default());
 
-    let handle_edit = enc!((set_editing, input_ref) move |_ev| {
+    let handle_edit = cb!((set_editing, input_ref) move |_ev| {
         set_editing(true);
         input_ref
             .borrow()
@@ -31,7 +30,7 @@ pub fn item(props: &ItemProps) -> Html {
             .unwrap(); // focus input
     });
 
-    let handle_blur = enc!((set_editing, input_ref, props) move || {
+    let handle_blur = cb!((set_editing, input_ref, props) move |_| {
         let mut new_name = input_ref
             .borrow()
             .cast::<web_sys::HtmlInputElement>()
@@ -47,9 +46,9 @@ pub fn item(props: &ItemProps) -> Html {
         set_editing(false);
     });
 
-    let handle_submit = enc!((handle_blur, input_ref, props) move |ev: KeyboardEvent| {
+    let handle_submit = cb!((handle_blur, input_ref, props) move |ev: KeyboardEvent| {
         match ev.key().as_str() {
-            "Enter" => handle_blur(),
+            "Enter" => handle_blur.emit(()),
             "Escape" => {
                 input_ref
                     .borrow()
@@ -71,19 +70,19 @@ pub fn item(props: &ItemProps) -> Html {
             <div class="view">
                 <input class="toggle" type="checkbox"
                     checked=completed
-                    oninput=Callback::from(move |_ev| toggle_completed.emit(()))
+                    oninput=cb!((toggle_completed) move |_ev| toggle_completed.emit(()))
                 />
-                <label ondblclick=Callback::from(handle_edit)>
+                <label ondblclick=handle_edit>
                     {&props.todo.name}
                 </label>
-                <button class="destroy" onclick=Callback::from(move |_ev| clear_todo.emit(())) />
+                <button class="destroy" onclick=cb!((clear_todo) move |_ev| clear_todo.emit(())) />
             </div>
             {
                 if *editing {
                     html! {
                         <input class="edit" value={&props.todo.name}
-                            onblur=Callback::from(move |_ev| handle_blur())
-                            onkeyup=Callback::from(handle_submit)
+                            onblur=cb!((handle_blur) move |_ev| handle_blur.emit(()))
+                            onkeyup=handle_submit
                             ref=input_ref.borrow().clone()
                         />
                     }

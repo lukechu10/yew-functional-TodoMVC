@@ -1,5 +1,4 @@
-use crate::Filter;
-use enclose::enc;
+use crate::{cb, Filter};
 use strum::IntoEnumIterator;
 use yew::prelude::*;
 use yew_functional::*;
@@ -35,9 +34,9 @@ pub fn footer(props: &FooterProps) -> Html {
                                 <a
                                     href=filter
                                     class=if filter == props.selected_filter {"selected"} else {""}
-                                    onclick=Callback::from(enc!((props) move |_ev| {
+                                    onclick=cb!((props) move |_ev| {
                                             props.on_filterchange.emit(filter);
-                                        }))
+                                        })
                                 >{format!("{:?}", filter)}</a>
                             </li>
                         }
@@ -49,7 +48,7 @@ pub fn footer(props: &FooterProps) -> Html {
                     html! {
                         <button
                             class="clear-completed"
-                            onclick=Callback::from(enc!((props) move |_ev| props.clear_completed.emit(()))) >
+                            onclick=cb!((props) move |_ev| props.clear_completed.emit(())) >
                             {"Clear completed"}
                         </button>
                     }

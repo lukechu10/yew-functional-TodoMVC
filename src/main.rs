@@ -6,6 +6,7 @@ mod footer;
 mod header;
 mod item;
 mod list;
+mod macros;
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
